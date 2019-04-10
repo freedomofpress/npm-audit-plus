@@ -1,0 +1,19 @@
+{
+  "name": "npm-audit-plus",
+  "version": "0.1.0",
+  "description": "A wrapper around npm audit that adds extra features",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "npm-audit-plus": "src/cli.js"
+  },
+  "author": "Harris Lapiroff",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "commander": "^2.20.0",
+    "word-wrap": "^1.2.3",
+    "xmlbuilder": "^12.0.0"
+  }
+}
