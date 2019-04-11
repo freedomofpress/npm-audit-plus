@@ -4,7 +4,7 @@
 
 * Ignore particular advisories
 * Specify a project to audit
-* Output audit result
+* Output audit result as JUnit XML, compatible with many CI systems
 
 ## Installation
 
