@@ -1,7 +1,7 @@
 {
   "name": "npm-audit-plus",
   "version": "0.1.1",
-  "description": "A wrapper around npm audit that adds extra features",
+  "description": "A wrapper around NPM's built-in audit that adds extra features",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
