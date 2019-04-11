@@ -2,15 +2,26 @@
   "name": "npm-audit-plus",
   "version": "0.1.2",
   "description": "A wrapper around NPM's built-in audit that adds extra features",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "src/cli.js",
   "bin": {
     "npm-audit-plus": "src/cli.js"
   },
   "author": "Harris Lapiroff",
-  "license": "AGPL-3.0",
+  "license": "AGPL-3.0-only",
+  "keywords": [
+    "audit",
+    "security",
+    "dependency management",
+    "ignore",
+    "vulnerabilities",
+    "continuous integration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freedomofpress/npm-audit-plus"
+  },
+  "bugs": "https://github.com/freedomofpress/npm-audit-plus/issues",
+  "homepage": "https://github.com/freedomofpress/npm-audit-plus",
   "dependencies": {
     "commander": "^2.20.0",
     "word-wrap": "^1.2.3",
