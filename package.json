@@ -1,6 +1,6 @@
 {
   "name": "npm-audit-plus",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A wrapper around NPM's built-in audit that adds extra features",
   "main": "src/cli.js",
   "bin": {
