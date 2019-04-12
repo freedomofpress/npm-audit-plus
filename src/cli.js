@@ -64,6 +64,8 @@ program
     )
 
     if (options && options.xml) {
+      const advisoryCount = passThruAdvisoriesIds.length
+      const ignoredCount = ignoredAdvisoriesIds.length
       // If the command was invoked with the XML argument, output as XML
       const junitJSON = {
         testsuites: {
@@ -72,7 +74,10 @@ program
               '@name': 'NPM Audit Summary',
               testcase: {
                 '@name': 'Summary',
-                '#text': templates.auditSummary(passThruActions, passThruAdvisoriesIds, ignoredAdvisoriesIds)
+                failure: {
+                  '@name': `${advisoryCount} ${advisoryCount == 1 ? "advisory" : "advisories"}`,
+                  '#text': templates.auditSummary(passThruActions, passThruAdvisoriesIds, ignoredAdvisoriesIds)
+                }
               }
             },
             {
