@@ -46,7 +46,13 @@ program
       ({ stdout, stderr } = error)
     }
 
-    const results = JSON.parse(stdout)
+    let results
+    try {
+      results = JSON.parse(stdout)
+    } catch (error) {
+      console.log('Could not parse JSON output from `npm audit`')
+      process.exit(1)
+    }
     const advisories = results.advisories
     // List of IDs filtered to the ones that are marked for display
     const passThruAdvisoriesIds = Object.keys(results.advisories).filter(x => !exceptionIds.includes(parseInt(x)))
