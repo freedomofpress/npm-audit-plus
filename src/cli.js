@@ -39,7 +39,7 @@ program
       // (i.e., without var/let/const)
       ({ stdout, stderr } = await exec(
         'npm audit --json',
-        { cwd: projectDir, maxBuffer: 1000000 }
+        { cwd: projectDir, maxBuffer: 30 * 1048576 }
       ))
     } catch(error) {
       // See above
