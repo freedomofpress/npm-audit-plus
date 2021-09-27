@@ -53,17 +53,44 @@ program
       console.log('Could not parse JSON output from `npm audit`')
       process.exit(1)
     }
-    const advisories = results.advisories
+    let advisories
+    let actions
+    if (results.auditReportVersion === 2) {
+      actions = []
+      advisories = {}
+      for (let key in results.vulnerabilities) {
+        let vuln = results.vulnerabilities[key]
+        if (vuln.via && vuln.via[0] && vuln.via[0].source) {
+          let via = vuln.via[0]
+          advisories[via.source] = {
+            "id": via.source,
+            "name": vuln.name,
+            "severity": vuln.severity,
+            "title": via.title,
+            "overview": `Vulnerability in ${vuln.name} ${vuln.range}`,
+            "recommendation": vuln.fixAvailable ? `Upgrade ${vuln.fixAvailable.name} to version ${vuln.fixAvailable.version}` : "No fix available",
+            "url": via.url,
+            "findings": [{
+              "version": via.range,
+              "paths": vuln.nodes,
+            }],
+          }
+        }
+      }
+    } else {
+      actions = results.actions
+      advisories = results.advisories
+    }
     // List of IDs filtered to the ones that are marked for display
-    const passThruAdvisoriesIds = Object.keys(results.advisories).filter(x => !exceptionIds.includes(parseInt(x)))
+    const passThruAdvisoriesIds = Object.keys(advisories).filter(x => !exceptionIds.includes(parseInt(x)))
     // List of IDs filtered to ones that are being ignored
-    const ignoredAdvisoriesIds = Object.keys(results.advisories).filter(x => exceptionIds.includes(parseInt(x)))
+    const ignoredAdvisoriesIds = Object.keys(advisories).filter(x => exceptionIds.includes(parseInt(x)))
 
     // Filter actions to ones that resolve advisories that passed the filter
     // Basically we're checking each action's list of advisories it resolves
     // for overlap with our `passThruAdvisoriesIds`. If theres any overlap, we
     // keep the action. Otherwise we ignore it.
-    const passThruActions = results.actions.filter(
+    const passThruActions = actions.filter(
       action => action.resolves.some(
         resolveObj => passThruAdvisoriesIds.includes(resolveObj.id.toString())
       )
