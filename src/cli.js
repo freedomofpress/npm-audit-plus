@@ -20,8 +20,13 @@ program
   .option('-p, --project <path>', 'Path to a project containing package.json and package-lock.json files. Defaults to current working directory')
   .option('-i, --ignore <ids>', 'Vulnerability IDs to ignore')
   .option('-x, --xml', 'Output as JUnit-formatted XML')
+  .option('--production', 'Ignore devDependencies')
+  .option('--audit-level', '[info | low | moderate | high | critical | none]: The minimum level of vulnerability for npm audit to exit with a non-zero exit code.')
   .action(async function(options) {
     let exceptionIds = []
+    let production = "";
+    let auditLevel = "";
+
     const projectDir = options.project ? path.resolve(options.project) : process.cwd()
 
     // If advisories to ignore are specified in command invocation, parse them
@@ -31,6 +36,21 @@ program
       exceptionIds = options.ignore.split(',').map(id => parseInt(id))
     }
 
+    // Check to ignore devDependencies
+    if (options && options.production) {
+      production = " --production"
+    }
+
+    // Check to ignore level
+    if (options && options.production) {
+      if(['info', 'low', 'moderate', 'high', 'critical', 'none'].includes('none')) {
+        auditLevel = ` --audit-level=${level}`;
+      } else {
+        console.log('unsupported value in --audit-level. Use `info` | `low` | `moderate` | `high` | `critical` | `none`')
+        process.exit(1)
+      }
+    }
+
     // Run `npm audit` and capture output. We use a try/catch to capture
     // output regardless of whether the audit returns zero or not
     let stdout, stderr
@@ -38,7 +58,7 @@ program
       // Exterior parens necessary for variable unpacking without declaration
       // (i.e., without var/let/const)
       ({ stdout, stderr } = await exec(
-        'npm audit --json',
+        `npm audit --json${production}${auditLevel}`,
         { cwd: projectDir, maxBuffer: 30 * 1048576 }
       ))
     } catch(error) {
