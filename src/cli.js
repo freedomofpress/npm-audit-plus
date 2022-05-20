@@ -14,6 +14,7 @@ const exec = promisify(require('child_process').exec)
 
 // Import templates
 const templates = require('./templates.js')
+const { exit } = require('process')
 
 program
   .description('Run npm audit with customized output')
@@ -21,7 +22,7 @@ program
   .option('-i, --ignore <ids>', 'Vulnerability IDs to ignore')
   .option('-x, --xml', 'Output as JUnit-formatted XML')
   .option('--production', 'Ignore devDependencies')
-  .option('--audit-level', '[info | low | moderate | high | critical | none]: The minimum level of vulnerability for npm audit to exit with a non-zero exit code.')
+  .option('--auditLevel', '[info | low | moderate | high | critical | none]: The minimum level of vulnerability for npm audit to exit with a non-zero exit code.')
   .action(async function(options) {
     let exceptionIds = []
     let production = "";
@@ -42,11 +43,11 @@ program
     }
 
     // Check to ignore level
-    if (options && options.production) {
-      if(['info', 'low', 'moderate', 'high', 'critical', 'none'].includes('none')) {
-        auditLevel = ` --audit-level=${level}`;
+    if (options && program.auditLevel) {
+      if(['info', 'low', 'moderate', 'high', 'critical', 'none'].includes(options)) {
+        auditLevel = ` --audit-level=${options}`;
       } else {
-        console.log('unsupported value in --audit-level. Use `info` | `low` | `moderate` | `high` | `critical` | `none`')
+        console.log(`unsupported value in --audit-level: ${options}. Use 'info' | 'low' | 'moderate' | 'high' | 'critical' | 'none'`)
         process.exit(1)
       }
     }
@@ -55,6 +56,7 @@ program
     // output regardless of whether the audit returns zero or not
     let stdout, stderr
     try {
+      console.log(`executing: npm audit --json${production}${auditLevel}`)
       // Exterior parens necessary for variable unpacking without declaration
       // (i.e., without var/let/const)
       ({ stdout, stderr } = await exec(
@@ -68,9 +70,14 @@ program
 
     let results
     try {
+      if(!stdout && options && program.auditLevel) {
+        // all fine, no results
+        console.log(`found 0 ${options} vulnerabilities`)
+        exit(0)
+      }
       results = JSON.parse(stdout)
     } catch (error) {
-      console.log('Could not parse JSON output from `npm audit`')
+      console.log(`Could not parse JSON output from 'npm audit':\n ${error}\n${stdout}${stderr}`)
       process.exit(1)
     }
     let advisories

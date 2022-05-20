@@ -39,9 +39,26 @@ $(npm bin)/npm-audit-plus --help  # If installed locally
 Other usage
 
 ```sh
-npx npm-audit-plus --production # Ignore vulnerabilities in devDependencies
+npx npm-audit-plus --production --xml # Ignore vulnerabilities in devDependencies
 ```
 
 ```sh
-npx npm-audit-plus --audit-level=high # Only exit with code non-zero on high and critical
+npx npm-audit-plus --auditLevel critical --xml # Only exit with code non-zero on high and critical
+```
+
+## Gitlab example
+
+```yml
+audit-npm:
+  script:
+    - npm ci
+    - npx npm-audit-plus --xml > npm-audit.junit.xml
+  allow_failure: true
+  artifacts:
+    when: always
+    paths:
+      - '*.junit.xml'
+    reports:
+      junit: npm-audit.junit.xml
+    expire_in: 1 day
 ```
