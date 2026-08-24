@@ -23,7 +23,7 @@
   "bugs": "https://github.com/freedomofpress/npm-audit-plus/issues",
   "homepage": "https://github.com/freedomofpress/npm-audit-plus",
   "dependencies": {
-    "commander": "^2.20.0",
+    "commander": "^15.0.0",
     "word-wrap": "^1.2.3",
     "xmlbuilder": "^12.0.0"
   }
